@@ -1,0 +1,25 @@
+// analog comparator .This program compares both inputs AIN0 and AIN1. The interrupt routine is carried out if the //voltage on AIN0 is bigger than on the input AIN1.During that the  leds on PORTC is turned on.the voltage on pin //PORTB.2 is higher than the voltage on PORTB.3.
+ 
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+#include <compat/deprecated.h>
+
+
+SIGNAL(SIG_COMPARATOR)
+{
+PORTC =0xFF; // Toggle the LEDS
+_delay_ms(250);
+PORTC=0x00;
+}
+
+int main( void )
+{
+DDRC=0xFF; // C as output
+DDRB=0x00; // PORTB set as input
+PORTB=0xFF;// pull up
+ACSR |= ((1<<ACIE)|(1<<ACIS1)|(1<<ACIS0)); // init comparator
+sei();
+for (;;)
+{}
+}

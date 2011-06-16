@@ -1,0 +1,66 @@
+#include <stdlib.h>
+#include <avr/io.h>
+#include <avr/pgmspace.h>
+#include <compat/deprecated.h>		//HEADER FILE FOR FUNCTIONS LIKE SBI AND CBI
+#include<util/delay.h>				//HEADER FILE FOR DELAY
+
+#include "lcd.h"
+
+
+
+
+int main(void)
+{
+   // char buffer[7];
+    //int  num=134;
+   // unsigned char i;
+	
+	//DDRA=0xF0;						//SET DATA DIRECTION REGISTER
+									//SET 1 for OUTPUT PORT
+									//SET 0 FOR INPUT PORT
+									//PA.4, PA.5, PA.6 AND PA.7 ARE OUTPUT
+									//ALL OTHERS ARE INPUT
+									
+	DDRB=0XFF;						//SET DATA DIRECTION REGISTER
+									//SET 1 for OUTPUT PORT
+									//SET 0 FOR INPUT PORT
+									//PB.2 IS  INPUT
+									//ALL OTHERS ARE OUTPUT
+	
+//	DDRD=0XF1;						//SET DATA DIRECTION REGISTER
+									//SET 1 for OUTPUT PORT
+									//SET 0 FOR INPUT PORT
+									//PD.1, PD.2 AND PD.3 ARE INPUT
+									//ALL OTHERS ARE OUTPUT
+	
+	DDRC=0xFF;
+		
+	//sbi(PORTB,2);					//ENABLE PULL UP FOR SWITCH INT2
+	//sbi(PORTD,1);					//ENABLE PULL UP FOR SW1
+	//sbi(PORTD,2);					//ENABLE PULL UP FOR SWITCH INT0
+	//sbi(PORTD,3);					//ENABLE PULL UP FOR SWITCH INT1
+    
+    lcd_init(LCD_DISP_ON);					/* initialize display, cursor off */
+
+    for (;;)								/* loop forever */ 
+	{                           
+        lcd_clrscr();						/* clear display and home cursor */        
+        lcd_puts("ROBOKITS INDIA\n");		/* put string to display (line 1) with linefeed */		
+        lcd_puts("    ROBOKITS.ORG");		/* cursor is now on second line, write second line */		
+		lcd_gotoxy(0,1);  					/* move cursor to position 0 on line 2 */        
+        lcd_puts("WWW.");					/* write single char to display */                
+      //  wait_until_key_pressed();			/* wait until push button PB2 (INT2) is pressed */
+		
+		
+        lcd_command(LCD_DISP_ON_CURSOR);	/* turn on cursor */
+        lcd_clrscr();     					/* clear display home cursor */		
+        lcd_puts( "CurOn");
+					/* wait until push button PB2 (INT2) is pressed */
+        
+        
+		lcd_clrscr();     					/* clear display home cursor */	
+		lcd_puts_P( "Line 1 longer than 14 characters\n" );	/* put string from program memory to display */
+        lcd_puts_P( "Shift both line1 and line2 left" );		
+						/* wait until push button PB2 (INT2) is pressed */
+    }
+}

@@ -1,0 +1,13 @@
+Install WinAVR into C:\ WinAVR-20090313
+
+3. Now go to Start-->Run-->(cmd.exe), i.e. go to command prompt.
+
+4. Go to the following directory C:\WinAVR-20090313\bin.
+
+5. Type this command “install_giveio” and press ENTER.
+
+6. You should get the “Success” message as shown in the snapshot below.
+
+5. Check the status by the command “status_giveio”.
+
+6. Installation of WinAVR is complete now.

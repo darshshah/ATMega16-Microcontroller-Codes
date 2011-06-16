@@ -1,0 +1,31 @@
+// blinking of led at .5 second rate using timer1 which is prescaled 8.overflow  interrupt is used.
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+#include <compat/deprecated.h>
+
+
+SIGNAL(SIG_OVERFLOW1)
+{
+  PORTC ^= (1 << 0); // Toggle the LED 
+}
+
+int main (void) 
+{
+   DDRC =0xFF; // Set LED as output 
+
+   TIMSK |= (1 << TOIE1); // Enable overflow interrupt 
+   sei(); // Enable global interrupts 
+
+   TCCR1B |= (1 << CS11); // Start timer at Fcpu/8 
+
+   for (;;) 
+   { }
+              
+ }
+
+// the below function can also be used to execute the interrupt.depends upon the user which to use.
+/*ISR(TIMER1_OVF_vect) 
+{ 
+   PORTC ^= (1 << 0); // Toggle the LED 
+}*/   

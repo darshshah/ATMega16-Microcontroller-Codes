@@ -1,0 +1,27 @@
+// blinking led on PORTC using interrupt and Timer0.
+
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+#include <compat/deprecated.h>
+
+char togg=00000000;
+
+SIGNAL (SIG_OVERFLOW0)
+{
+togg=~togg;    // togg^=0xFF;
+PORTC=togg; 
+}
+
+void main( void )
+{
+DDRC=0xFF; /* use all pins on PORTB for output */
+
+TIMSK=0b00000001; /* enables the T/C0 overflow interrupt in the T/C interrupt mask register for */
+TCNT0=0; /* start value of T/C0 */
+TCCR0=0b00000101; /* prescale ck/1024 */
+
+sei(); /* set global interrupt enable */
+
+for (;;){}
+}

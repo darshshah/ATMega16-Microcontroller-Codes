@@ -1,0 +1,67 @@
+#include<avr/io.h>					//HEADER FILE FOR AVR INPUT OUTPUT
+#include<compat/deprecated.h>
+#include<avr/delay.h>
+
+#define OC1A_PIN PD5              // OC1A pin
+#define OC1B_PIN PD6              // OC1B pin
+#define OC1_DDR DDRD             // OC1 DDR
+void main()
+{    int i;
+     DDRD=0xff;
+	DDRC=0xff;	
+	PORTD=0b01110100;
+  
+
+
+    TCCR1A =  0b10100001;    	// enable 8 bit PWM, select inverted PWM
+		
+    
+    TCCR1B = _BV(CS11) | _BV(WGM12);
+ 
+   while(1)
+    {   
+        								
+			PORTC=0xff;
+             PORTD=0b01110100;
+								/* increase speed of motor */
+           
+            OCR1AL = 130;
+			OCR1BL = 130;
+			 _delay_ms(250);
+			_delay_ms(250);
+            _delay_ms(250);	
+				
+				PORTC=0x00;							// delay 25 ms
+        
+            PORTD= 0b00110100;
+			_delay_ms(200);
+			
+			PORTC=0xFF;
+			PORTD= 0b10111000;
+			
+            OCR1AL = 250;
+			OCR1BL = 250;
+			 _delay_ms(250);
+			_delay_ms(250);
+            _delay_ms(250);
+			
+			PORTC=0x00;
+			
+			PORTD= 0b10110100;
+			_delay_ms(200);
+			
+			PORTC=0xFF;
+			
+			PORTD= 0b01110100;
+			
+       for( i=255; i>0; i--)								/* decrease speed of motor */
+        {
+            OCR1AL = i;            
+			OCR1BL = i;
+           _delay_ms(10);									// delay 25 ms
+        }
+		   PORTC=0x00;
+		   
+		   _delay_ms(50);
+	}									// delay 25 ms
+}

@@ -1,0 +1,111 @@
+Interrupt: we write as SIGNAL(signal names) {} .the types of interrupt possible are given
+
+Signal names:
+External interrupt0 function name:
+SIG_INTERRUPT0
+
+External interrupt1 function name:
+SIG_INTERRUPT1
+
+External interrupt2 function name (ATmega):
+SIG_INTERRUPT2
+
+External interrupt3 function name (ATmega[16]03)
+SIG_INTERRUPT3
+
+External interrupt4 function name (ATmega[16]03):
+SIG_INTERRUPT4
+
+External interrupt5 function name (ATmega[16]03):
+SIG_INTERRUPT5
+
+External interrupt6 function name (ATmega[16]03):
+SIG_INTERRUPT6
+
+External interrupt7 function name (ATmega[16]03):
+SIG_INTERRUPT7
+
+Output compare2 interrupt function name:
+SIG_OUTPUT_COMPARE2
+
+Overflow2 interrupt function name:
+SIG_OVERFLOW2
+
+Input capture1 interrupt function name:
+SIG_INPUT_CAPTURE1
+
+Output compare1(A) interrupt function name:
+SIG_OUTPUT_COMPARE1A
+
+Output compare1B interrupt function name:
+SIG_OUTPUT_COMPARE1B
+
+Overflow1 interrupt function name:
+SIG_OVERFLOW1
+
+Output compare0 interrupt function name:
+SIG_OUTPUT_COMPARE0
+
+Overflow0 interrupt function name:
+SIG_OVERFLOW0
+
+SPI interrupt function name:
+SIG_SPI
+
+UART(0) receive complete interrupt function name:
+SIG_UART_RECV
+
+UART1 Receive complete interrupt function name (ATmega161):
+SIG_UART1_RECV
+
+UART(0) Data register empty interrupt function name:
+SIG_UART_DATA
+
+UART1 Data register empty interrupt function name (ATmega161):
+SIG_UART1_DATA
+
+UART(0) Transmit complete interrupt function name:
+SIG_UART_TRANS
+
+UART1 Transmit complete interrupt function name (ATmega161):
+SIG_UART1_TRANS
+
+ADC Conversion complete:
+SIG_ADC
+
+Eeprom ready:
+SIG_EEPROM
+
+Analog comparator interrupt function name:
+SIG_COMPARATOR
+
+
+For the definition of such an interrupt routine you need to write the
+keyword „SIGNAL“ or „INTERRUPT“.
+
+SIGNAL (SIG_NAME)
+{
+Here the instructions of the interrupt routine are processed.
+}
+The interrupt routine with the keyword SIGNAL is executed with disabled interrupts.
+
+Or:
+INTERRUPT (SIG_NAME)
+{
+Here the instructions of the interrupt routine are processed.
+}
+The interrupt routine with the keyword INTERRUPT is executed with enabled interrupts.
+
+
+Functionens of <interrupt.h>:
+
+Sei():
+This function sets the I-bit in the status register and therefore enables interrupts.The individual interrupt enable control is then performed in separate control registers.
+
+
+Cli():
+Deletes the I-bit in the status register and therefore avoids possible interrutps.
+
+
+enable_external_int (unsiged char ints):
+This function sets suitable bits in the GIMSK register (Mega series:EIMSK) in order to enable external interrupts.

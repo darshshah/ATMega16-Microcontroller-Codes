@@ -1,0 +1,59 @@
+void InitUART( unsigned int baudrate );
+unsigned char ReceiveByte( void );
+void TransmitByte( unsigned char data );
+
+
+int main(void)
+
+{	unsigned char a;
+   							
+	DDRB=0XFF;						//SET DATA DIRECTION T
+	DDRD=0X0F;					//SET DATA DIRECTION REGISTER
+	
+    InitUART( 6 );  // 1MHz frequency - 9600bps
+    lcd_init(LCD_DISP_ON); // initialize display, cursor off 
+
+    for (;;)								/* loop forever */ 
+ {                           
+        lcd_clrscr();						/* clear display and home cursor */        
+       		
+	    a=ReceiveByte();
+	   _delay_ms(250);
+  	   
+	      lcd_putc(a);
+	   _delay_ms(250);
+	 	
+	    TransmitByte(a); 
+	   _delay_ms(250);
+	  //    Echo the received   character
+	
+    }
+}
+
+ void InitUART( unsigned int baud)
+  {    
+    UBRRH=0x00;
+    UBRRL = (unsigned char)baud;                   /*  Set the baud rate */
+    UCSRB = 0b00011000; 
+	UCSRC = 0b10000110; 
+  }
+/*----------------------------------------------------------------
+------------FUNCTIONS TO READ UART-------------------------------
+-----------------------------------------------------------------*/
+  unsigned char ReceiveByte( void )
+  {unsigned char data;
+   while ( (UCSRA &  0x80) == 0x00 )
+{;}     /*  Wait for incomming data   */
+   data=UDR;
+   return data;/* Return the   data */
+  }
+
+/*----------------------------------------------------------------
+------------FUNCTIONS TO WRITE UART-------------------------------
+-----------------------------------------------------------------*/
+  void TransmitByte( unsigned char data )
+  {
+   while ( (UCSRA & 0x20) == 0x00)
+{;}        /* Wait for   empty transmit buffer */
+   UDR =  data;  /* Start transmittion   */
+  }

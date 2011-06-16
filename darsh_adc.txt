@@ -1,0 +1,26 @@
+// ADC by DARSH
+void InitADC(void)
+{
+	ADMUX = 0;
+	ADMUX |= (1 << REFS0); // Set ADC reference to AVCC 
+	//ADMUX |= (1 << ADLAR); // Left adjust ADC result to allow easy 8 bit reading 
+	ADCSRA = 0xC3;// 11000011 = prescale by 8. and  aden and adsc set
+	while(!(ADCSRA & 0x10)); // conversion going on as flag is not set
+	ADCSRA |= 0x10;// write flag to 1 to reset it and start a new conversion
+}
+
+
+// ReadADC 
+
+unsigned int ReadADC(unsigned char channel)
+{
+	unsigned int volt,volt_low,volt_high;
+	ADMUX = channel;
+	ADCSRA = 0xC3;
+	while(!(ADCSRA & 0x10));
+	ADCSRA |= 0x10;
+	volt_low = ADCL;
+	volt_high = ((unsigned int) (ADCH <<8));
+	volt = volt_low | volt_high;
+	return volt;
+}

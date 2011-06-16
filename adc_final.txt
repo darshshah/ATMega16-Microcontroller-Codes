@@ -1,0 +1,56 @@
+// initalize adc
+#include<avr/io.h>
+
+void InitADC(void)
+{
+	ADMUX = 0;
+	ADMUX |= (1 << REFS0); // Set ADC reference to AVCC 
+	ADMUX |= (1 << ADLAR); // Left adjust ADC result to allow easy 8 bit reading 
+
+	ADCSRA = 0xC3;
+	
+	while(!(ADCSRA & 0x10));
+	
+	ADCSRA |= 0x10;
+}
+
+
+// ReadADC 
+
+unsigned int ReadADC(unsigned char channel)
+{
+	unsigned int volt, volt_low, volt_high;
+
+	ADMUX = channel;
+	
+	ADCSRA = 0xC3;
+	
+	while(!(ADCSRA & 0x10));
+	
+	ADCSRA |= 0x10;
+	
+	volt_low = ADCL;
+	volt_high = ((unsigned int) (ADCH <<8));
+	
+	volt = volt_low | volt_high;
+	
+	return volt;
+}
+
+int main(void)
+{DDRC=0xff;
+   int x;
+   InitADC();
+   while(1)
+   {	InitADC();
+		x=ReadADC(0);
+		if(x<25)
+			{
+				PORTC=0xff;
+			}
+		else
+			{	
+				PORTC=0x00;
+			}
+	}
+} 

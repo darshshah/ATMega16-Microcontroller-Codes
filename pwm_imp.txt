@@ -1,0 +1,23 @@
+1. PWM
+	3 modes- we use fast or phase correct pwm
+	so  set bits in WGM in tccr0
+
+2.now acc. to WGM mode select COM00 and COM01 .it is diff for diff value of WGM.
+
+3.OCR write the compare value.so our signal is on for 0 to COMPARE VALUE and then off from COMPARE VALUE to 255.
+so by changing ocr1a or ocr1b value we generate pwm.
+
+eg. OCR0 = 0xC0; //set 75% duty cycle
+i.e. c0 corresponds to 192 in decimal. and 192/255 gives 75.2% so our duty cycle is 75%
+
+similarly high value for ocr
+
+
+When the PWM (PulseWidthModulation) mode is selected the
+Timer/Counter 1 can be used as an 8,9 or 10bit, free running PWM.
+Timer/Counter 1 acts as an up/down counter that is counting up from
+$0000 to the selected top (8bit -> $00FF, 9bit -> $01FF, 10bit -> $03FF),
+where it turns and counts down to $0000 and repeats this cycle
+endlessly. When the counter value matches the content of the compare
+register (OCR1A, OCR1B) it has an effect on the output pins OCA1 and
+OCB1

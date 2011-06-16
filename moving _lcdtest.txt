@@ -1,0 +1,97 @@
+// moving lcd
+if (config == shift)
+        {
+             //shift display
+             LCDrs = 0;
+             LCDdata = 0b00011000;  
+             wait;
+             LCDenable = 1;
+             wait;
+             LCDenable = 0;
+             wait;
+         }
+
+
+
+
+
+
+
+#define STRING_LENGTH   21 
+#define LCD_MAX      15 
+
+char array[STRING_LENGTH] = { "darsh" }; 
+
+for ( j = 0; j < STRING_LENGTH; j++ ) 
+{ 
+    if ( j >= LCD_MAX ) 
+        lcd_gotoxy( 0, 0 ); 
+    else 
+        lcd_gotoxy( LCD_MAX - j, 0 ); 
+
+    int start;
+	start = (j <= LCD_MAX) ? 0 : (j - LCD_MAX); 
+    int end;
+	end   = (j <= LCD_MAX) ? j : (start + LCD_MAX); 
+
+    if ( end >= STRING_LENGTH ) 
+        end = STRING_LENGTH - 1; 
+
+    for ( i = start; i <= end; i++ ) 
+        lcd_putchar( array[i] ); 
+    
+    delay_ms(500); 
+}
+
+
+
+
+
+
+
+
+
+ If you are using one of the common Hitachi or HD44780 or compatible, then there are two special commands which allow you to shift the content in the display:
+#define RightShift     0x1C
+#define LeftShift      0x18
+
+void LCD_Shift (unsigned char Right)
+{
+   if (Right)
+      WriteLCDCommand (RightShift);
+   else
+      WriteLCDCommand (LeftShift);
+}
+ 
+Of course you would have to use your own routine to send the commands (which are pretty timing sensitive).
+ 
+BN
+2009-04-20 11:47 AM
+ 	Reply	 
+
+Re: Need help displaying moving text on a 16x2 LCD	
+Options	  		 
+bigmac 
+Super Contributor
+Posts: 1741
+Registered: 2006-02-11 
+
+
+Message 3 of 5 
+
+Viewed 470 times
+ 
+Hello,
+ 
+An alternative to BN's suggestion is to make use of the "Entry mode set" command, rather than the cursor/display shift command.  Reference to these commands can be found within AN1745.  Here is an extract from the application note:
+Entry Mode Set
+ 
+I/D — Increments (I/D = 1) or decrements (I/D = 0) the DDRAM address by 1 when a character code is written into or read from DDRAM. The cursor or blinking moves to the right when incremented by 1 and to the left when decremented by 1. The same applies to writing and reading of CGRAM.
+ 
+S — Shifts the entire display either to the right (ID = 0) or to the left (I/D = 1) when S is 1. The display does not shift if S is 0. If S is 1, it will seem as if the cursor does not move but the display does. The display does not shift when reading from DDRAM. Also, writing into or reading out from CGRAM does not shift the display.
+To set the mode that you require would need a command value of 0x07.
+ 
+The advantage of this method would seem that the left shift of the display would occur automatically whenever each character was written.  With the previous method, the display shift command would need to be given prior to writing each character to the display.
+ 
+Regards,
+Mac

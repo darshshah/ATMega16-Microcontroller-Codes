@@ -1,0 +1,55 @@
+#include<avr/io.h>
+#include<compat/deprecated.h>
+#include<avr/delay.h>
+
+void main()
+{
+ DDRD=0xFF;
+TCCR1A =  0b10100001;    	// enable 8 bit PWM, select fast non inverting PWM
+    
+TCCR1B = _BV(CS11) | _BV(WGM12);
+
+while(1)
+{
+   forward();
+   _delay_ms(250);
+  right();
+   _delay_ms(250);
+	PORTD=0b01110100;
+	for(i=0;i<255;i++)
+	{
+	OCR1AL = i;
+	OCR1BL = i;
+
+	}
+
+}
+}
+
+
+void forward()
+{
+PORTD=0b01110100;
+OCR1AL = 130;
+OCR1BL = 130;
+//_delay_ms(100);
+}
+
+void right()
+{
+PORTD= 0b00110100;
+OCR1AL = 130;
+OCR1BL = 130;
+_delay_ms(50);
+_delay_ms(50);
+}
+
+void reverse()
+{
+PORTD=0b10111000;
+OCR1AL = 130;
+OCR1BL = 130;
+_delay_ms(100);
+_delay_ms(100);
+
+}

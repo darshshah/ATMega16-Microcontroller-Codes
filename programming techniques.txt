@@ -1,0 +1,165 @@
+different types by which we can program he microcontroller
+
+· BV(x):
+
+In the processor specific file (for example: <io8535.h> the register bit
+names are defined through their bit number (0-7) in the correct register (
+for instance: the constante PINA6 is the 6th bit of PORTA and is of the
+value 6)
+One needs function BV (x) in order to come from the bit´s location to the
+correct value with which the register has to be loaded.( so BV (PINA6)
+creates as a return value 64 2^6)
+example:
+char result = BV(PINA6);
+result is now of the value 64
+
+
+· void sbi (uint8_t port, uint8_t bit):
+
+With this instruction you can set particular bits in the given register. The
+other bits stay the same.
+examples:
+sbi (PORTB, 3);
+sbi (PORTB, PINA3);
+Both functions set the 3rd bit of register PORTB.
+
+
+· void cbi (uint8_t port, uint8_t bit):
+
+With this instruction you can delete particular bits in the given register.
+examples:
+cbi (PORTB,3);
+cbi (PORTB, PINB3);
+Both functions delete the 3rd bit of register PORTB.
+
+
+· uint8_t bit_is_set (uint8_t port, uint8_t bit);
+
+This function checks the bit at the place bit in the register port.
+In case the bit is set this function has as a result 1, otherwise 0.
+This function can be used as a check for loops or if statements.
+example:
+uint8_t result = bit_is_set (PORTB, PINB3);
+result = 1 if the 3rd bit of PORTB is set
+result = 0 ,otherwise.
+
+
+· uint8_t bit_is_clear (uint8_t port, uint8_t bit);
+
+This function checks the bit at the place bit in the register port.
+In case the bit is not set this function has as a result 1, otherwise 0.
+This function can be used as a check for loops or if statements.
+example:
+uint8_t result = bit_is_clear (PORTB, PINB3);
+result = 1 if the 3rd bit of PORTB is not set
+result = 0 ,otherwise.
+
+
+· uint8_t inp (uint8_t port):
+
+With this function you can read and return a 8 bit value out of the
+mentioned register.
+example:
+uint8_t res = inp (SREG);
+Read the statue register SREG and put the value in the variable res.
+
+
+· uint16_t __inw (uint8_t port):
+
+With this function you can read a 16 bit value out of the mentioned 16 bit
+register and bring it back. These registers are ADC, ICR1, OCR1A,
+OCR1B, TCNT1 (for processor AT90S8535) and must be read in a
+special range in order to obtain a correct 16 bit value.
+With this function it is possible that an interrupt is carried out during the
+reading process.
+example:
+uint16_t res = __inw (TCNT1);
+Read register TCNT1 and put the value into the variable res.
+
+
+· uint16_t __inw_atomic (uint8_t port):
+
+These functions work like __inw but an interrupt is not possible.
+In this function __inw_atomic an assembler instruction (“cli”) is integrated
+that deletes the I-bit (global interrupt enable) of the status register.
+
+
+· outp (uint8_t val, uint8_t port):
+
+With this function you can write the 8 bit value val into register port.
+example:
+outp(0xFF, PORTB);
+This instruction writes the value $FF into register PORTB.
+
+· __outw (uint16_t val, uint8_t port):
+
+With this function a 16 bit value can be written into the register port. This
+is for initialising of the following registers: ADC, ICR1, OCR1A, OCR1B,
+TCNT1 (for processor AT90S8535)
+With this function it is possible that an interrupt is carried out during the
+writing process.
+example:
+__outw (0xAAAA, OCR1A);
+The 16 bit register OCR1A (output compare register A of timer 1) is
+initialised with value $AAAA.
+
+
+· __outw_atomic (uint16_t val, uint8_t port):
+
+This function works like __outw but an interrupt is not possible.
+In this function __outw_atomic an assembler instruction (“cli”) is
+integrated that deletes the I-bit (global interrupt enable) in the status
+register.
+
+
+2. How to use Ports:
+All AVR ports have true “read-modify-write” functionality when used as
+general digital I/O ports. This means that the direction of one port pin can
+be changed without unintentionally changing the direction of any other
+pin with the sbi (uint8_t port, uint8_t bit) and the cbi (uint8_t port, uint8_t
+bit)instructions.
+Each ports consist of three registers.
+registers:
+
+
+· DDRX:
+
+This is the Data Direction Register of port X (instead of X use the right
+port character – for example DDRA is the register for Port A).
+If you set this register to $FF the whole Port X is defined as output and if
+the register loaded with $00 the whole Port X is defined as input.
+You can set or clear only some pins with the instructions sbi (uint8_t port,
+uint8_t bit) and cbi (uint8_t port, uint8_t bit).
+example:
+outp (0xF0, DDRB);
+This instruction sets pin 0-3 of PORTB as input and pin 4-7 as output.
+
+
+· PORTX:
+
+This is the data register of PORTX (X stands for A, B, C or D).
+If you want to put data to the port or read data from the port you have to
+use this register.
+example:
+outp (0xAA, PORTB);
+This instruction loads the data register of PORTB with the value $AA.
+In this case PORTB is used as output, so you have to initialize PORTB
+as output ($FF -> DDRB).
+char res = inp (PORTB);
+This instruction loads the value of the data register of PORTB into the
+variable res. In this case PORTB is used as input, so you have to
+initialize PORTB as input ($00 -> DDRB).
+
+
+· PINX:
+
+PINX (X stands for A, B, C or D) is the input pin address of PORTX and
+is no register. When reading PORTX the PORTX data latch is read, and
+when reading PINX, the logical values present on the pins are read. The
+PORTX input pins are of the state “read only”, while the data register
+(PORTX) and the data direction register (DDRX) are of the state
+“read/write”.
+example:
+outp(0x00,DDRA);
+res = inp(PINA);
+With this instructions you can read the physical value of PORTA.

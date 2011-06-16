@@ -1,0 +1,156 @@
+// this program moves display right/left and some trouble shooting
+
+#include 'lcd.h'
+#include <stdlib.h>
+#include <avr/io.h>
+#include <avr/pgmspace.h>
+#include <compat/deprecated.h>		
+#include<util/delay.h>
+
+
+void main(void)
+{
+ DDRC=0xff;
+ int i;
+   
+   lcd_init(LCD_DISP_ON);	
+    lcd_clrscr();
+
+   while(1)
+   {	
+		lcd_clrscr();
+		lcd_puts("DARSH SHAH");
+		_delay_ms(50);
+		for(i=0;i<16;i++)
+		{lcd_command(LCD_MOVE_DISP_RIGHT);
+		_delay_ms(50);
+ }
+		
+   
+}
+
+this code writes darsh shah as a string and then it is shifted right one character at a time and out of display.
+-----------------------------------------------------------------------------------------------
+to go in other direction 
+for(i=0;i<16;i++)
+		{
+		lcd_command(LCD_MOVE_DISP_LEFT);
+		_delay_ms(50);
+		}
+this code writes darsh shah as a string and then it is shifted left one character at a time and out of display.
+-----------------------------------------------------------------------------------------------
+
+if i write i<20 then after 16 characters which is lenght of LCD , blank spaces are shown for 4 spaces.
+
+-----------------------------------------------------------------------------------------------
+
+for continuous display some algorithm is needed. 
+array[]= darsh shah
+for(i=0;i<16;i++)
+		{lcd_putc(array[i]);
+		_delay_ms(50);
+		lcd_command(LCD_MOVE_DISP_RIGHT);
+		_delay_ms(50);
+		}
+
+then after 10 characters(darsssssh shag) junk letters are printed.total 6 junk letters.
+in this code what happens is that first d is printed and then shifted one space and then a.
+so afer darsh sh the text moves out as 8 characters+8 shifts. hence we want the last letter to print first.
+
+------------------------------------------------------------------------------------------------
+array[]=darsh shah
+for(i=0;i<10;i++)
+		{lcd_putc(array[9-i]);
+		_delay_ms(50);
+		lcd_command(LCD_MOVE_DISP_RIGHT);
+		_delay_ms(50);
+		}
+
+here in this code, h is printed then space , then ha then space, then hah then space and similarly 
+hahs hsrad will be printed but only hahs hs is printed due to space i.e. 16 characters.
+
+-----------------------------------------------------------------------------------------------
+array[]=darsh shah
+for(i=0;i<10;i++)
+		{lcd_putc(array[9-i]);
+		_delay_ms(50);
+		lcd_command(LCD_MOVE_CURSOR_LEFT);
+		_delay_ms(50);
+		lcd_command(LCD_MOVE_DISP_RIGHT);
+		_delay_ms(50);
+		lcd_command(LCD_MOVE_CURSOR_LEFT);
+		_delay_ms(50);
+		}
+
+in this code h is printed in first line and rest of it comes in 2nd line. so i need to figure it how to make it stay only on first line.
+
+-----------------------------------------------------------------------------------------
+array[]=darsh shah
+for(i=0;i<26;i++)
+		{i<10?lcd_putc(array[9-i]):lcd_putc(' ');
+		_delay_ms(50);
+		lcd_command(LCD_MOVE_CURSOR_LEFT);
+		_delay_ms(50);
+		lcd_command(LCD_MOVE_DISP_RIGHT);
+		_delay_ms(50);
+		lcd_command(LCD_MOVE_CURSOR_LEFT);
+		_delay_ms(50);
+		
+		}
+
+the above code writes darsh shah as stated in above programs and now it also puts blank spaces till all the text is shifted to right and goes out of display section.
+
+----------------------------------------------------------------------------------------------
+
+lcd_gotoxy() is not working properly in  loop. it is because lcd_command(LCD_MOVE_DISP_RIGHT);
+i.e when we write this the whole display shifts and the positions of  x  also shift acc. 
+hence if i give this command once, then lcd_gotoxy(0,0) becomes lcd_gotoxy(1,0). so the whole starting point is shifted by 1 unit and the area before the starting point cannot be controlled by us.
+
+-----------------------------------------------------------------------------------------------
+
+#define STRING_LENGTH  25 
+#define LCD_MAX      15 
+
+
+
+
+void main()
+{char array[STRING_LENGTH] = { "darsh shah is robot enthu" };  
+int i,j;
+int start;
+int end;
+
+lcd_init(LCD_DISP_ON_CURSOR);	
+   lcd_clrscr();
+while(1)
+{
+for ( j = 0; j < STRING_LENGTH; j++ ) 
+{ 
+    if ( j >= LCD_MAX ) 
+        lcd_gotoxy( 0, 0 ); 
+    else 
+        lcd_gotoxy( LCD_MAX - j, 0 ); 
+
+    
+	start = (j <= LCD_MAX) ? 0 : (j - LCD_MAX); 
+    
+	end   = (j <= LCD_MAX) ? j : (start + LCD_MAX); 
+
+    if ( end >= STRING_LENGTH ) 
+        end = STRING_LENGTH - 1; 
+       
+    for ( i = start; i <= end; i++ ) 
+        lcd_putc( array[i] );
+		
+    _delay_ms(100); 
+}
+ 
+lcd_clrscr();
+}
+}
+
+
+this code does it.  the rext can be of any length u want. one optimixation required is that after the text ends, the screen is cleaared and again the rolling text starts. but i want that the text shifts left and then when whole screen is empty , the text reappears again.
+
+---------------------------------------------------------------------------------------------------------------
+
